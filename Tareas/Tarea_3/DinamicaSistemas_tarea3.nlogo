@@ -1,55 +1,13 @@
-globals
-[
-  x0
-  a
-  x
-  n ;numero de puntos en el intervalo a
-  delta-a
-  t   ;numero de iteraciones transitorias
-  i   ; contador de pasos de i
-]
-
-;; set-up procedures
-
 to setup
   ca
-  set x0 1
-  set n 1000
-  set delta-a (af - ai) / n
-  set t 300
-  set x x0
-  set a ai
-  set i 0
+  system-dynamics-setup
   reset-ticks
 end
 
-;; Main procedure
+
 to go
-  repeat n ; barrer a n veces (delta-a)
-  [
-    set a ( ai + ( i * delta-a ))
-    ;; dinamica transitoria
-    set x x0
-    repeat t ;
-    [
-      set x f (x)
-
-    ]
-
-    ;; dinamica del atractor
-    repeat 500
-    [
-      set x f( x )
-      update-plots
-    ]
-    set i i + 1
-  ]
-
-  tick
-end
-
-to-report f [xn]
-  report run-result fx
+ system-dynamics-go
+ tick
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -79,60 +37,12 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
-SLIDER
-23
-54
-195
-87
-af
-af
-0
-4
-1.0
-0.1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-27
-123
-199
-156
-ai
-ai
-0
-4
-0.0
-0.1
-1
-NIL
-HORIZONTAL
-
-PLOT
-204
-10
-796
-454
-plot 1
-NIL
-NIL
-0.0
-4.0
-0.0
-1.0
-true
-false
-"" "set-plot-x-range ai af"
-PENS
-"default" 1.0 2 -5825686 true "" "plotxy a x"
-
 BUTTON
-1091
-60
-1157
-93
-Setup
+868
+40
+1050
+73
+NIL
 setup
 NIL
 1
@@ -145,13 +55,13 @@ NIL
 1
 
 BUTTON
-1093
-120
-1156
-153
-GO
-go
+866
+113
+1056
+146
 NIL
+go
+T
 1
 T
 OBSERVER
@@ -161,16 +71,23 @@ NIL
 NIL
 1
 
-INPUTBOX
-35
-172
-184
-232
-fx
-a * sin ( 180 * xn )
-1
-0
-String (reporter)
+PLOT
+710
+166
+1651
+731
+dinamica de sistemas
+x
+f(x)
+0.0
+1000.0
+0.0
+1000.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -5825686 true "" "plot x"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -517,6 +434,29 @@ Polygon -7500403 true true 30 75 75 30 270 225 225 270
 NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
+1.0
+    org.nlogo.sdm.gui.AggregateDrawing 8
+        org.nlogo.sdm.gui.StockFigure "attributes" "attributes" 1 "FillColor" "Color" 225 225 182 303 95 60 40
+            org.nlogo.sdm.gui.WrappedStock "x" "100" 1
+        org.nlogo.sdm.gui.ConverterFigure "attributes" "attributes" 1 "FillColor" "Color" 130 188 183 251 192 50 50
+            org.nlogo.sdm.gui.WrappedConverter "0.25" "a"
+        org.nlogo.sdm.gui.ReservoirFigure "attributes" "attributes" 1 "FillColor" "Color" 192 192 192 158 91 30 30
+        org.nlogo.sdm.gui.RateConnection 3 188 107 239 109 291 112 NULL NULL 0 0 0
+            org.jhotdraw.figures.ChopEllipseConnector REF 5
+            org.jhotdraw.standard.ChopBoxConnector REF 1
+            org.nlogo.sdm.gui.WrappedRate "a * x * (1 - (x / k))" "crecimiento"
+                org.nlogo.sdm.gui.WrappedReservoir  REF 2 0
+        org.nlogo.sdm.gui.BindingConnection 2 291 112 239 109 NULL NULL 0 0 0
+            org.jhotdraw.standard.ChopBoxConnector REF 1
+            org.nlogo.sdm.gui.ChopRateConnector REF 6
+        org.nlogo.sdm.gui.BindingConnection 2 269 198 239 109 NULL NULL 0 0 0
+            org.jhotdraw.contrib.ChopDiamondConnector REF 3
+            org.nlogo.sdm.gui.ChopRateConnector REF 6
+        org.nlogo.sdm.gui.ConverterFigure "attributes" "attributes" 1 "FillColor" "Color" 130 188 183 353 205 50 50
+            org.nlogo.sdm.gui.WrappedConverter "5000" "k"
+        org.nlogo.sdm.gui.BindingConnection 2 364 218 239 109 NULL NULL 0 0 0
+            org.jhotdraw.contrib.ChopDiamondConnector REF 17
+            org.nlogo.sdm.gui.ChopRateConnector REF 6
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

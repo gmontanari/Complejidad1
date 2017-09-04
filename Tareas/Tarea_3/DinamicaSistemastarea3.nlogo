@@ -1,31 +1,14 @@
-; Modelo Dinamico
-;******* Preambulo
-; Dar de alta variables globales Xn+1 = a * Xn
-; a es una variable pero se mantiene constante en la corrida, entonces lo llamamos Parametro
-; X =  es Xn y Xn+1 es una variable de estado (variables) es la misma variable en distintos tiempos
-globals
-[     ; Corchetes definen los Bloque de Procedimiento, aca se dan de alta las variables globales en general
-   x         ; variable de estado Xn
-   a         ; parametro del sistema
-]
-
-;************** Setup procedures
-
 to setup
   ca
-  set x x0
-  set a a1
+  system-dynamics-setup
   reset-ticks
 end
 
-;************** Main procedures
 
-to iteration
-  show x ; print valor de x
-  set x  ( a * sin ( 180 * x ) )
-  tick
+to go
+ system-dynamics-go
+ tick
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -48,17 +31,17 @@ GRAPHICS-WINDOW
 16
 -16
 16
-1
-1
+0
+0
 1
 ticks
 30.0
 
 BUTTON
-90
-25
-156
-58
+868
+40
+1050
+73
 NIL
 setup
 NIL
@@ -72,12 +55,12 @@ NIL
 1
 
 BUTTON
-92
-80
-175
+866
 113
+1056
+146
 NIL
-iteration
+go
 T
 1
 T
@@ -89,52 +72,22 @@ NIL
 1
 
 PLOT
-209
-10
-849
-511
-TimeSerie
-Time
-Xt
+686
+303
+886
+453
+plot 1
+NIL
+NIL
 0.0
-1.0
+10.0
 0.0
-1.0
+10.0
 true
-true
+false
 "" ""
 PENS
-"x" 1.0 0 -5825686 false "" "plot x"
-
-SLIDER
-35
-153
-151
-186
-a1
-a1
-0
-1
-1.0
-0.1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-36
-204
-152
-237
-x0
-x0
-0
-1
-1.0
-0.1
-1
-NIL
-HORIZONTAL
+"default" 1.0 0 -5825686 true "" "plot x"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -481,6 +434,24 @@ Polygon -7500403 true true 30 75 75 30 270 225 225 270
 NetLogo 6.0.2
 @#$#@#$#@
 @#$#@#$#@
+1.0
+    org.nlogo.sdm.gui.AggregateDrawing 6
+        org.nlogo.sdm.gui.StockFigure "attributes" "attributes" 1 "FillColor" "Color" 225 225 182 303 95 60 40
+            org.nlogo.sdm.gui.WrappedStock "x" "100" 1
+        org.nlogo.sdm.gui.ConverterFigure "attributes" "attributes" 1 "FillColor" "Color" 130 188 183 251 192 50 50
+            org.nlogo.sdm.gui.WrappedConverter "0.1" "a"
+        org.nlogo.sdm.gui.ReservoirFigure "attributes" "attributes" 1 "FillColor" "Color" 192 192 192 158 91 30 30
+        org.nlogo.sdm.gui.RateConnection 3 188 107 239 109 291 112 NULL NULL 0 0 0
+            org.jhotdraw.figures.ChopEllipseConnector REF 5
+            org.jhotdraw.standard.ChopBoxConnector REF 1
+            org.nlogo.sdm.gui.WrappedRate "a * x" "crecimiento"
+                org.nlogo.sdm.gui.WrappedReservoir  REF 2 0
+        org.nlogo.sdm.gui.BindingConnection 2 291 112 239 109 NULL NULL 0 0 0
+            org.jhotdraw.standard.ChopBoxConnector REF 1
+            org.nlogo.sdm.gui.ChopRateConnector REF 6
+        org.nlogo.sdm.gui.BindingConnection 2 269 198 239 109 NULL NULL 0 0 0
+            org.jhotdraw.contrib.ChopDiamondConnector REF 3
+            org.nlogo.sdm.gui.ChopRateConnector REF 6
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
