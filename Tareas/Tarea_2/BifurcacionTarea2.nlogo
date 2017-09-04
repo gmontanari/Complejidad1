@@ -1,29 +1,55 @@
 globals
 [
-  xn
-  xn1
+  x0
+  a
+  x
+  n ;numero de puntos en el intervalo a
+  delta-a
+  t   ;numero de iteraciones transitorias
+  i   ; contador de pasos de i
 ]
 
+;; set-up procedures
 
 to setup
   ca
-  set xn 1
+  set x0 1
+  set n 1000
+  set delta-a (af - ai) / n
+  set t 300
+  set x x0
+  set a ai
+  set i 0
   reset-ticks
 end
 
-;************** Main procedures
-
-to iteration
-  set xn1 f xn
-  tick ; lo puso gerardo ????
-end
-
-to-report f [x]
-  report  a * sin ( 180 * x)
-end
-
+;; Main procedure
 to go
+  repeat n ; barrer a n veces (delta-a)
+  [
+    set a ( ai + ( i * delta-a ))
+    ;; dinamica transitoria
+    set x x0
+    repeat t ;
+    [
+      set x f (x)
+
+    ]
+
+    ;; dinamica del atractor
+    repeat 500
+    [
+      set x f( x )
+      update-plots
+    ]
+    set i i + 1
+  ]
+
   tick
+end
+
+to-report f [xn]
+  report run-result fx
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -47,18 +73,66 @@ GRAPHICS-WINDOW
 16
 -16
 16
-1
-1
+0
+0
 1
 ticks
 30.0
 
-BUTTON
-90
-25
-156
-58
+SLIDER
+23
+54
+195
+87
+af
+af
+0
+4
+1.0
+0.1
+1
 NIL
+HORIZONTAL
+
+SLIDER
+27
+123
+199
+156
+ai
+ai
+0
+4
+0.0
+0.1
+1
+NIL
+HORIZONTAL
+
+PLOT
+204
+10
+796
+454
+plot 1
+NIL
+NIL
+0.0
+4.0
+0.0
+1.0
+true
+false
+"" "set-plot-x-range ai af"
+PENS
+"default" 1.0 2 -5825686 true "" "plotxy a x"
+
+BUTTON
+1091
+60
+1157
+93
+Setup
 setup
 NIL
 1
@@ -70,49 +144,14 @@ NIL
 NIL
 1
 
-PLOT
-678
-10
-1361
-645
-Web Diagram
-Xn
-Xn+1
-0.0
-1.0
-0.0
-1.0
-true
-false
-"" ""
-PENS
-"recta" 1.0 0 -5825686 true "plotxy 0 0\nplotxy 1 1" ""
-"parabola" 1.0 0 -987046 true "" "let x 0\nlet deltax 1 / 50\nrepeat 50\n[\n  plotxy x f x\n  set x x + deltax\n]"
-"xn" 1.0 0 -8330359 true "" "set xn1 f xn\nplotxy xn xn1\nplotxy xn1 xn1\nset xn xn1"
-
-SLIDER
-36
-243
-208
-276
-a
-a
-0
-1
-0.3
-0.1
-1
-NIL
-HORIZONTAL
-
 BUTTON
-89
-73
-152
-106
-NIL
+1093
+120
+1156
+153
+GO
 go
-T
+NIL
 1
 T
 OBSERVER
@@ -122,22 +161,16 @@ NIL
 NIL
 1
 
-BUTTON
-91
-137
-181
-170
-NIL
-iteration
-T
+INPUTBOX
+35
+172
+184
+232
+fx
+a * sin ( 180 * xn )
 1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
+0
+String (reporter)
 
 @#$#@#$#@
 ## WHAT IS IT?
