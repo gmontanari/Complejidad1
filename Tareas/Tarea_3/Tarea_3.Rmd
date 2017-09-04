@@ -1,0 +1,35 @@
+---
+title: "Tarea 3: Dinámica de Sistemas"
+author: "Guillermina Montanari"
+date: "9/4/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(png)
+library(grid)
+```
+
+Realice las modificaciones pertinentes con la herramienta de dinámica de 
+sistemas vista en clase, del programa de crecimiento malthusiano y resuelva
+numéricamente la ecuación de crecimiento logístico
+
+ $dx / dt = ax (1- x/K)$
+ 
+con la condición inicial x(t = 0) = 100, donde a = 0.25 es la razón de crecimiento
+y K = 5000 es la capacidad de carga del sistema.
+
+### Esquema del Sistema Dinámico
+
+```{r fig.width=3, fig.height=3,echo=FALSE}
+img <- readPNG("esquema.png")
+ grid.raster(img)
+```
+
+### Gráfica del Sistema Dinámico
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("grafica.png")
+ grid.raster(img)
+```
