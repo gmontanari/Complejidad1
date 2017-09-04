@@ -1,0 +1,127 @@
+---
+title: "Tarea 2: Mapeo Caótico"
+author: "Guillermina Montanari"
+date: "9/2/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(png)
+library(grid)
+```
+
+#Mapeo Caótico
+
+Considere el siguiente mapeo dependiente del parámetro a de R : [0, 1] →[0, 1],
+
+ $f(x)= a*sin(x*\pi)$
+
+Grafique las series de tiempo de los atractores de punto fijo, periódicos y
+caóticos del mapeo.
+
+## Atractores
+
+### Punto Fijo:
+
+1. a  [0.1 - 0.3] y x0 = 0.1
+
+```{r fig.width=3, fig.height=3,echo=FALSE}
+img <- readPNG("atractor1.png")
+ grid.raster(img)
+```
+
+### Periódico:
+
+2. a [0.4 - 0.5] y x0 = 1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("atractor2.png")
+ grid.raster(img)
+```
+
+3. a = 0.6 y x0 = 1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("atractor3.png")
+ grid.raster(img)
+```
+
+3. a = 0.7 y x0 = 1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("atractor4.png")
+ grid.raster(img)
+```
+
+4. a = 0.8 y x0 = 1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("atractor5.png")
+ grid.raster(img)
+```
+
+### Caótico:
+
+5. a = 0.9 y x0 = 1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("atractor6.png")
+ grid.raster(img)
+```
+
+5. b = 1 y x0 = 1 ¿ Es esto azar?
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("atractor7.png")
+ grid.raster(img)
+```
+
+### Telaraña de atractores
+
+#### Punto Fijo:
+
+1. $ a  = 0.3 y x0 = 0.1
+
+```{r fig.width=3, fig.height=3,echo=FALSE}
+img <- readPNG("telarañafija.png")
+ grid.raster(img)
+```
+
+### Periódico o Ciclo:
+
+2. a  = 0.8 y x0 = 0.1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("telarañaciclo.png")
+ grid.raster(img)
+```
+
+### Caótico:
+
+3. a = 0.9 y x0 = 1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("telarañacaos.png")
+ grid.raster(img)
+```
+
+
+### Azar:
+
+3. a = 1 y x0 = 1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("telarañazar.png")
+ grid.raster(img)
+```
+
+### Diagrama de Bifurcación
+
+5. a [0,1] y x0 = 1
+
+```{r fig.width=4, fig.height=4,echo=FALSE}
+img <- readPNG("bifurcacion.png")
+ grid.raster(img)
+```
+
