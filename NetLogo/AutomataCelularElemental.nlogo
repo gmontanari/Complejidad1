@@ -1,32 +1,61 @@
-; Modelo Dinamico
-;******* Preambulo
-; Dar de alta variables globales Xn+1 = a * Xn
-; a es una variable pero se mantiene constante en la corrida, entonces lo llamamos Parametro
-; X =  es Xn y Xn+1 es una variable de estado (variables) es la misma variable en distintos tiempos
 globals
-[     ; Corchetes definen los Bloque de Procedimiento, aca se dan de alta las variables globales en general
-   x         ; variable de estado Xn
-;  a         ; parametro del sistema
+[
+  time-row
+  binario ; lista de la regla en binario
+  langton
 ]
 
-;************** Setup procedures
+patches-own[state]
 
 to setup
-  clear-all
-  set x x0
-  ;set a 2
+  ca
+  set binario []
+  convert
+  ask patches
+  [
+    set state 0
+    recolor
+  ]
+  ifelse random?
+  [
+    ask patches with [pycor = max-pycor]
+    [
+      set state ifelse-value
+               (random-float 1 < 0.5) [0] [1]
+      recolor
+    ]
+  ]
+  [
+    ask patches with [pycor = max-pycor and pxcor = 0]
+    [
+      set state 1
+      recolor
+    ]
+  ]
   reset-ticks
 end
 
-;************** Main procedures
-
-to iteration
-  show x ; print valor de x
-  set x ((a * x) * ( 1 - x))  ;x = a*x
-  tick
+to convert
+  set binario []
+  let b rule
+  let nq 0
+  repeat 8
+  [
+    ifelse (b mod 2 = 0)
+    [
+      set binario fput 0 binario
+      set nq nq + 1
+    ]
+    [set binario fput 1 binario]
+    set b int ( b / 2 )
+  ]
 end
 
-
+to recolor
+  ifelse state = 0
+  [set pcolor white]
+  [set pcolor black]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -56,10 +85,10 @@ ticks
 30.0
 
 BUTTON
-90
-25
-156
-58
+63
+38
+129
+71
 NIL
 setup
 NIL
@@ -72,14 +101,36 @@ NIL
 NIL
 1
 
-BUTTON
-92
-80
-175
-113
+INPUTBOX
+672
+77
+821
+139
+rule
+30.0
+1
+0
+Number
+
+MONITOR
+689
+169
+870
+214
 NIL
-iteration
-T
+binario
+17
+1
+11
+
+BUTTON
+65
+101
+144
+134
+NIL
+convert
+NIL
 1
 T
 OBSERVER
@@ -89,53 +140,16 @@ NIL
 NIL
 1
 
-PLOT
-763
-10
-1319
-511
-TimeSerie
-Time
-Xt
-0.0
-100.0
--1.0
-1.0
-true
-false
-"" ""
-PENS
-"x" 1.0 0 -5825686 true "" "plot x"
-
-SLIDER
-35
-153
-207
-186
-a
-a
-0
-4
-4.0
-0.1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-40
-204
-212
-237
-x0
-x0
+SWITCH
+52
+176
+163
+209
+random?
+random?
 0
 1
-0.5
-0.1
-1
-NIL
-HORIZONTAL
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?

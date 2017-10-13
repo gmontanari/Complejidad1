@@ -1,41 +1,124 @@
-; Modelo Dinamico
-;******* Preambulo
-; Dar de alta variables globales Xn+1 = a * Xn
-; a es una variable pero se mantiene constante en la corrida, entonces lo llamamos Parametro
-; X =  es Xn y Xn+1 es una variable de estado (variables) es la misma variable en distintos tiempos
 globals
-[     ; Corchetes definen los Bloque de Procedimiento, aca se dan de alta las variables globales en general
-   x         ; variable de estado Xn
-;  a         ; parametro del sistema
+[
+  re-min ; la parte real más pequeña
+  re-max ; la parte real más grande
+  im-min ; la parte imaginaria más pequeña
+  im-max ; la parte imaginaria más pequeña
+
+mx ; tamaño del paso en Re
+my ; tamaño del paso en Im
 ]
 
-;************** Setup procedures
+patches-own ; varibale de estado
+[
+  re ; parte real
+  im ; parte imaginaria
+  counter ; cuenta las interaciones realizadas para el código
+]
 
 to setup
-  clear-all
-  set x x0
-  ;set a 2
+  ca
+  set re-min -2 ; parte real
+  set re-max 1 ; parte real
+  set im-min -1 ; parte im
+  set im-max 1 ; parte im
+
+  transform-world
+  compute-set
+
   reset-ticks
 end
 
-;************** Main procedures
+to linear-transform [a b] ; transformamos el mundo de Netlogo
+  set re mx * (a - min-pxcor) + re-min
+  set im my * (b - min-pycor) + im-min
+  set counter 0
+end
 
-to iteration
-  show x ; print valor de x
-  set x ((a * x) * ( 1 - x))  ;x = a*x
-  tick
+to transform-world
+set mx (re-max - re-min)/(max-pxcor - min-pxcor)
+set my (im-max - im-min)/(max-pycor - min-pycor)
+ask patches
+  [
+  linear-transform pxcor pycor
+  set counter 0
+
+  ]
+end
+
+to compute-set
+  ask patches
+  [
+  iteration
+  set pcolor counter
+  ]
+
 end
 
 
+to iteration
+  ;condicion inicial z = a + i b
+  let a 0
+  let b 0
+  let aux 0
+  while [ (a ^ 2 + b ^ 2 )< 4 and counter < 100 ]
+  [
+  set aux a
+  set a a ^ 2 - b ^ 2 + re
+  set b 2 * aux * b + im
+
+  set counter counter + 1
+
+  ]
+
+end
+
+to zoom-in
+  if mouse-down?
+  [
+    let delta-x abs (re-max - re-min)
+    let delta-y abs (im-max - im-min)
+
+    let x0 mx * (mouse-xcor - min-pxcor) + re-min
+    let y0 my * (mouse-ycor - min-pycor) + im-min
+
+    set re-min x0 - 0.25 * delta-x
+    set re-min x0 - 0.25 * delta-x
+    set im-min y0 - 0.25 * delta-y
+    set im-min y0 - 0.25 * delta-y
+
+    transform-world
+    compute-set
+   ]
+end
+
+to zoom-out
+  if mouse-down?
+  [
+    let delta-x abs (re-max - re-min)
+    let delta-y abs (im-max - im-min)
+
+    let x0 mx * (mouse-xcor - min-pxcor) + re-min
+    let y0 my * (mouse-ycor - min-pycor) + im-min
+
+    set re-min x0 - 1.25 * delta-x
+    set re-min x0 - 1.25 * delta-x
+    set im-min y0 - 1.25 * delta-y
+    set im-min y0 - 1.25 * delta-y
+
+    transform-world
+    compute-set
+   ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-647
-448
+333
+30
+955
+449
 -1
 -1
-13.0
+1.022444
 1
 10
 1
@@ -45,10 +128,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-300
+300
+-200
+200
 0
 0
 1
@@ -56,10 +139,10 @@ ticks
 30.0
 
 BUTTON
-90
-25
-156
-58
+70
+27
+133
+60
 NIL
 setup
 NIL
@@ -73,12 +156,12 @@ NIL
 1
 
 BUTTON
-92
-80
-175
-113
+73
+94
+158
+127
 NIL
-iteration
+zoom-in
 T
 1
 T
@@ -89,53 +172,22 @@ NIL
 NIL
 1
 
-PLOT
-763
-10
-1319
-511
-TimeSerie
-Time
-Xt
-0.0
-100.0
--1.0
-1.0
-true
-false
-"" ""
-PENS
-"x" 1.0 0 -5825686 true "" "plot x"
-
-SLIDER
-35
-153
-207
-186
-a
-a
-0
-4
-4.0
-0.1
-1
+BUTTON
+65
+161
+159
+194
 NIL
-HORIZONTAL
-
-SLIDER
-40
-204
-212
-237
-x0
-x0
-0
+zoom-out
+T
 1
-0.5
-0.1
-1
+T
+OBSERVER
 NIL
-HORIZONTAL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?

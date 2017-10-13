@@ -1,32 +1,57 @@
-; Modelo Dinamico
-;******* Preambulo
-; Dar de alta variables globales Xn+1 = a * Xn
-; a es una variable pero se mantiene constante en la corrida, entonces lo llamamos Parametro
-; X =  es Xn y Xn+1 es una variable de estado (variables) es la misma variable en distintos tiempos
 globals
-[     ; Corchetes definen los Bloque de Procedimiento, aca se dan de alta las variables globales en general
-   x         ; variable de estado Xn
-;  a         ; parametro del sistema
+[
+  min-step
 ]
 
-;************** Setup procedures
-
 to setup
-  clear-all
-  set x x0
-  ;set a 2
+  ca
+  set min-step world-width / ( 3 ^ n )
+  crt 1
+  [
+    setxy min-pxcor min-pycor
+    set color white
+    set heading 90
+    pd
+  ]
   reset-ticks
+
 end
 
-;************** Main procedures
-
-to iteration
-  show x ; print valor de x
-  set x ((a * x) * ( 1 - x))  ;x = a*x
+to go
+  clear-drawing
+  set min-step world-width / ( 3 ^ n )
+  ask turtles
+  [
+    iteration n
+  ]
   tick
 end
 
-
+to iteration [k]  ; conjunto generador
+  ifelse ( k = 1)
+  [
+    fd min-step
+    lt 90
+    fd min-step
+    rt 90
+    fd min-step
+    lt 270
+    fd min-step
+    rt 270
+    fd min-step
+  ]
+  [
+    iteration ( k - 1 )
+    lt 90
+    iteration ( k - 1 )
+    rt 90
+    iteration ( k - 1 )
+    lt 270
+    iteration ( k - 1 )
+    rt 270
+    iteration ( k - 1 )
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -45,21 +70,36 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+0
+32
+0
+32
 0
 0
 1
 ticks
 30.0
 
+SLIDER
+6
+28
+178
+61
+n
+n
+1
+30
+7.0
+1
+1
+NIL
+HORIZONTAL
+
 BUTTON
-90
-25
-156
-58
+39
+92
+105
+125
 NIL
 setup
 NIL
@@ -73,13 +113,13 @@ NIL
 1
 
 BUTTON
-92
-80
-175
-113
+42
+154
+105
+187
 NIL
-iteration
-T
+go
+NIL
 1
 T
 OBSERVER
@@ -89,50 +129,17 @@ NIL
 NIL
 1
 
-PLOT
-763
+SLIDER
+13
+215
+185
+248
+lados
+lados
+3
 10
-1319
-511
-TimeSerie
-Time
-Xt
-0.0
-100.0
--1.0
-1.0
-true
-false
-"" ""
-PENS
-"x" 1.0 0 -5825686 true "" "plot x"
-
-SLIDER
-35
-153
-207
-186
-a
-a
-0
-4
 4.0
-0.1
 1
-NIL
-HORIZONTAL
-
-SLIDER
-40
-204
-212
-237
-x0
-x0
-0
-1
-0.5
-0.1
 1
 NIL
 HORIZONTAL

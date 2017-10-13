@@ -1,41 +1,96 @@
-; Modelo Dinamico
-;******* Preambulo
-; Dar de alta variables globales Xn+1 = a * Xn
-; a es una variable pero se mantiene constante en la corrida, entonces lo llamamos Parametro
-; X =  es Xn y Xn+1 es una variable de estado (variables) es la misma variable en distintos tiempos
 globals
-[     ; Corchetes definen los Bloque de Procedimiento, aca se dan de alta las variables globales en general
-   x         ; variable de estado Xn
-;  a         ; parametro del sistema
+[
+contador
+N ; numero de puntos
+a    ; pendiente
+b   ; ordenada al origen
+x   ; ln epsilon
+y   ; ln contador
+sx    ; suma de x
+sy    ; suma de y
+sxy
+sx2   ; suma de x cuadrado
+epsilon
+ei   ; tamaño caja inicial
+ef   ; tamaño caja final
+delta-e  ; tamaño paso
+n-e   ; numero puntos barrer epsilon
+fondo
+fractal
 ]
 
-;************** Setup procedures
 
 to setup
-  clear-all
-  set x x0
-  ;set a 2
+  ca
+  dibujar-fractal
+  set ei 1
+  set ef 50
+  set n-e 320
+  set delta-e ( ef - ei ) / (n-e)
   reset-ticks
+  set fondo white
+  set fractal black
 end
 
-;************** Main procedures
+to dibujar-fractal
+ ask patches [set pcolor fondo]
+ ;import-pcolors "curvakoch.png"
+ import-pcolors "pulmon1.png"
+ ;import-pcolors "Pulmon2hyperoxic.jpg"
+ ;import-pcolors "Pulmon2hypoxic.jpg"
+ ;ask patches with [ pcolor != fondo ] [ set pcolor fractal]
+ set contador 0
+end
 
-to iteration
-  show x ; print valor de x
-  set x ((a * x) * ( 1 - x))  ;x = a*x
+to barrer-epsilon
+  let i 0
+  repeat n-e
+  [
+    set epsilon ei + i * delta-e
+    dibujar
+    set i i + 1
+  ]
+end
+
+to dibujar
+  dibujar-fractal
+  ask patches
+  [
+    if pcolor = fractal
+    [
+      set contador contador + 1
+      ask patches in-radius epsilon
+      [
+        set pcolor green
+      ]
+    ]
+  ]
+  set x ln epsilon
+  set y ln contador
+  set N N + 1
+
+  set sx (sx + x)
+  set sy (sy + y )
+  set sxy (sxy + x * y)
+  set sx2 (sx2 + x * x)
+
+  if N > 1
+  [
+    set a ((N * sxy) - (sx * sy)) / (N * sx2 - sx * sx)
+    set b (sy - a * sx) / (N)
+
+  ]
   tick
 end
-
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-647
-448
+819
+620
 -1
 -1
-13.0
+1.0
 1
 10
 1
@@ -45,10 +100,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-300
+300
+-300
+300
 0
 0
 1
@@ -56,10 +111,10 @@ ticks
 30.0
 
 BUTTON
-90
-25
-156
-58
+75
+41
+141
+74
 NIL
 setup
 NIL
@@ -73,13 +128,13 @@ NIL
 1
 
 BUTTON
-92
-80
-175
-113
+74
+104
+149
+137
 NIL
-iteration
-T
+dibujar
+NIL
 1
 T
 OBSERVER
@@ -90,52 +145,62 @@ NIL
 1
 
 PLOT
-763
-10
-1319
-511
-TimeSerie
-Time
-Xt
+873
+18
+1292
+368
+Dimensiones fractal
+In e
+In N(e)
 0.0
-100.0
--1.0
-1.0
+10.0
+0.0
+10.0
 true
 false
 "" ""
 PENS
-"x" 1.0 0 -5825686 true "" "plot x"
+"default" 1.0 2 -16777216 true "" "if contador > 1\n[plotxy ln epsilon ln contador]"
+"pen-1" 1.0 0 -5825686 true "" "if N > 1 \n[\nplot-pen-reset\nplotxy 0 b\nplotxy 5 a * 5 + b\n]"
 
-SLIDER
-35
-153
-207
-186
-a
-a
-0
-4
-4.0
-0.1
-1
+MONITOR
+42
+324
+112
+369
 NIL
-HORIZONTAL
+contador
+17
+1
+11
 
-SLIDER
-40
-204
-212
-237
-x0
-x0
-0
+MONITOR
+54
+448
+178
+493
+Dimension Fractal
+a
+17
 1
-0.5
-0.1
-1
+11
+
+BUTTON
+70
+160
+193
+193
 NIL
-HORIZONTAL
+barrer-epsilon
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?

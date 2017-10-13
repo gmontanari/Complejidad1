@@ -1,41 +1,47 @@
-; Modelo Dinamico
-;******* Preambulo
-; Dar de alta variables globales Xn+1 = a * Xn
-; a es una variable pero se mantiene constante en la corrida, entonces lo llamamos Parametro
-; X =  es Xn y Xn+1 es una variable de estado (variables) es la misma variable en distintos tiempos
 globals
-[     ; Corchetes definen los Bloque de Procedimiento, aca se dan de alta las variables globales en general
-   x         ; variable de estado Xn
-;  a         ; parametro del sistema
+[
+contador
 ]
 
-;************** Setup procedures
 
 to setup
-  clear-all
-  set x x0
-  ;set a 2
+  ca
+  dibujar-fractal
   reset-ticks
 end
 
-;************** Main procedures
-
-to iteration
-  show x ; print valor de x
-  set x ((a * x) * ( 1 - x))  ;x = a*x
-  tick
+to dibujar-fractal
+  ask patches [set pcolor black]
+ import-pcolors "curvakoch.png"
+ ask patches with [ pcolor != black] [ set pcolor white]
+ set contador 0
 end
 
 
+to dibujar
+  dibujar-fractal
+  ask patches
+  [
+    if pcolor = white
+    [
+      set contador contador + 1
+      ask patches in-radius epsilon
+      [
+        set pcolor green
+      ]
+    ]
+  ]
+  tick
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-647
-448
+819
+620
 -1
 -1
-13.0
+1.0
 1
 10
 1
@@ -45,10 +51,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-300
+300
+-300
+300
 0
 0
 1
@@ -56,10 +62,10 @@ ticks
 30.0
 
 BUTTON
-90
-25
-156
-58
+75
+41
+141
+74
 NIL
 setup
 NIL
@@ -72,14 +78,29 @@ NIL
 NIL
 1
 
-BUTTON
-92
-80
-175
-113
+SLIDER
+19
+185
+191
+218
+epsilon
+epsilon
+1
+50
+25.0
+1
+1
 NIL
-iteration
-T
+HORIZONTAL
+
+BUTTON
+70
+249
+145
+282
+NIL
+dibujar
+NIL
 1
 T
 OBSERVER
@@ -90,52 +111,33 @@ NIL
 1
 
 PLOT
-763
-10
-1319
-511
-TimeSerie
-Time
-Xt
+873
+18
+1292
+368
+Dimensiones fractal
+In e
+In N(e)
 0.0
-100.0
--1.0
-1.0
+10.0
+0.0
+10.0
 true
 false
 "" ""
 PENS
-"x" 1.0 0 -5825686 true "" "plot x"
+"default" 1.0 2 -16777216 true "" "if contador != 0\n[plotxy ln epsilon ln (contador + 1)]"
 
-SLIDER
-35
-153
-207
-186
-a
-a
-0
-4
-4.0
-0.1
-1
+MONITOR
+42
+324
+112
+369
 NIL
-HORIZONTAL
-
-SLIDER
-40
-204
-212
-237
-x0
-x0
-0
+contador
+17
 1
-0.5
-0.1
-1
-NIL
-HORIZONTAL
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
