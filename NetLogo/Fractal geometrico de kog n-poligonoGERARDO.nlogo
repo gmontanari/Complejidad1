@@ -1,66 +1,70 @@
 globals
 [
-  min-step
+ min-step
+  a
 ]
 
 to setup
   ca
-  set min-step world-width / ( 3 ^ n )
+  set min-step world-width / (3 ^ n)
+  set a 360 / l
   crt 1
   [
-    setxy min-pxcor min-pycor
-    set color white
-    set heading 90
-    pd
+   setxy min-pxcor min-pycor
+   set color white
+   set heading 90
+   pd
   ]
   reset-ticks
 end
 
 to go
   clear-drawing
-  set min-step world-width / ( 3 ^ n )
-  ;ask turtles
+  set min-step world-width / (3 ^ n)
   ask turtle 0
   [
-    iteration n
+   iteration n
   ]
   tick
 end
 
-to iteration [k]  ; conjunto generador
-  ifelse ( k = 1)
+to iteration [k]
+  ifelse (k = 1)
   [
     fd min-step
-    lt 90
+    lt 180 - a
+    repeat l - 2
+    [
     fd min-step
-    rt 90
+    rt a
+    ]
     fd min-step
-    lt 270
-    fd min-step
-    rt 270
+    lt 180 - a
     fd min-step
   ]
   [
-    iteration ( k - 1 )
-    lt 90
-    iteration ( k - 1 )
-    rt 90
-    iteration ( k - 1 )
-    lt 270
-    iteration ( k - 1 )
-    rt 270
-    iteration ( k - 1 )
+    iteration (k - 1)
+    lt 180 - a
+    repeat l - 2
+    [
+      iteration (k - 1)
+      rt a
+    ]
+    iteration (k - 1)
+    lt 180 - a
+    iteration (k - 1)
   ]
-end
+
+  end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
+236
 10
-647
-448
+749
+524
 -1
 -1
-13.0
+5.0
 1
 10
 1
@@ -71,53 +75,21 @@ GRAPHICS-WINDOW
 1
 1
 0
-32
+100
 0
-32
+100
 0
 0
 1
 ticks
 30.0
 
-SLIDER
-6
-28
-178
-61
-n
-n
-1
-30
-7.0
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
-39
-92
-105
-125
-NIL
-setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-42
-154
-105
-187
-NIL
+67
+213
+161
+246
+GOOOOO
 go
 NIL
 1
@@ -129,16 +101,48 @@ NIL
 NIL
 1
 
+BUTTON
+55
+47
+174
+80
+SETUUUUUP
+setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
 SLIDER
-13
-215
+31
+98
+203
+131
+n
+n
+1
+8
+8.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+35
+152
+207
 185
-248
-lados
-lados
+l
+l
 3
-10
-6.0
+9
+5.0
 1
 1
 NIL
@@ -486,7 +490,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

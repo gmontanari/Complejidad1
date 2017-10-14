@@ -32,6 +32,7 @@ to setup
       recolor
     ]
   ]
+  set time-row max-pycor
   reset-ticks
 end
 
@@ -56,15 +57,55 @@ to recolor
   [set pcolor white]
   [set pcolor black]
 end
+
+to go
+  ask patches with [pycor = time-row]
+  [
+    do-rule
+    recolor
+  ]
+  set time-row time-row - 1
+  if time-row = min-pycor [setup-continue]
+
+  tick
+end
+
+to do-rule
+  let left-patch [state] of patch-at -1 0
+  let right-patch [state] of patch-at 1 0
+
+  if left-patch = 1 and state = 1 and right-patch = 1 [ ask patch-at 0 -1 [set state item 0 binario]]
+  if left-patch = 1 and state = 1 and right-patch = 0 [ ask patch-at 0 -1 [set state item 1 binario]]
+  if left-patch = 1 and state = 0 and right-patch = 1 [ ask patch-at 0 -1 [set state item 2 binario]]
+  if left-patch = 1 and state = 0 and right-patch = 0 [ ask patch-at 0 -1 [set state item 3 binario]]
+  if left-patch = 0 and state = 1 and right-patch = 1 [ ask patch-at 0 -1 [set state item 4 binario]]
+  if left-patch = 0 and state = 1 and right-patch = 0 [ ask patch-at 0 -1 [set state item 5 binario]]
+  if left-patch = 0 and state = 0 and right-patch = 1 [ ask patch-at 0 -1 [set state item 6 binario]]
+  if left-patch = 0 and state = 0 and right-patch = 0 [ ask patch-at 0 -1 [set state item 7 binario]]
+end
+
+to setup-continue
+  ask patches with [pycor = max-pycor]
+  [
+    set state [state] of patch pxcor (  min-pycor  )
+    recolor
+  ]
+  ask patches with [pycor != max-pycor]
+  [
+    set state 0
+    recolor
+  ]
+  set time-row max-pycor
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
 10
-647
-448
+419
+620
 -1
 -1
-13.0
+1.0
 1
 10
 1
@@ -74,10 +115,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-100
+100
+-300
+300
 0
 0
 1
@@ -107,7 +148,7 @@ INPUTBOX
 821
 139
 rule
-30.0
+110.0
 1
 0
 Number
@@ -147,9 +188,26 @@ SWITCH
 209
 random?
 random?
-0
+1
 1
 -1000
+
+BUTTON
+65
+141
+128
+174
+NIL
+go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
