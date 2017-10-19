@@ -31,13 +31,15 @@ to iteration [k]  ; conjunto generador
   ifelse ( k = 1)
   [
     fd min-step
-    lt 90
+    lt 72
     fd min-step
-    rt 90
+    rt 72
     fd min-step
-    lt 270
+    lt (72 * 3)
     fd min-step
-    rt 270
+    rt (72 * 3)
+    fd min-step
+    rt 72
     fd min-step
   ]
   [
@@ -49,6 +51,8 @@ to iteration [k]  ; conjunto generador
     lt 270
     iteration ( k - 1 )
     rt 270
+    iteration ( k - 1 )
+    rt 90
     iteration ( k - 1 )
   ]
 end
@@ -89,7 +93,7 @@ n
 n
 1
 30
-10.0
+1.0
 1
 1
 NIL

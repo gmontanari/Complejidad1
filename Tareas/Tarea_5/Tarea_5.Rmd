@@ -1,0 +1,19 @@
+---
+title: "Tarea 3: Dinámica de Sistemas"
+author: "Guillermina Montanari"
+date: "9/4/2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(png)
+library(grid)
+```
+
+### Dibujar el pistolero en el juego de la vida
+
+```{r fig.width=3, fig.height=3,echo=FALSE}
+img <- readPNG("esquema.png")
+ grid.raster(img)
+```

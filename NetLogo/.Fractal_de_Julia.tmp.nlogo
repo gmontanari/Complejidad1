@@ -1,95 +1,68 @@
 globals
 [
-  min-step
-  angle
+  re-min ; la parte real más pequeña
+  re-max ; la parte real más grande
+  im-min ; la parte imaginaria más pequeña
+  im-max ; la parte imaginaria más pequeña
+
+  mx ; tamaño del paso en Re
+  my ; tamaño del paso en Im
+  counter
 ]
 
 to setup
   ca
-  set angle (360 / lados)
-  set min-step world-width / ( 3 ^ n )
-  crt 1
-  [
-    setxy min-pxcor min-pycor
-    set color white
-    set heading 90
-    pd
-  ]
+  set re-min -2 ; parte real
+  set re-max 1 ; parte real
+  set im-min -1 ; parte im
+  set im-max 1 ; parte im
+
+  transform-world
+  compute-set
+
   reset-ticks
 end
 
-to go
-  clear-drawing
-  set min-step world-width / ( 3 ^ n )
-  ask turtle 0
+to transform-world
+set mx (re-max - re-min)/(max-pxcor - min-pxcor)
+set my (im-max - im-min)/(max-pycor - min-pycor)
+ask patches
   [
-    iteration n
+   counter 0
   ]
-  tick
 end
 
-to iteration [k]  ; conjunto generador
-  ifelse ( k = 1)
+to compute-set
+  ask patches
   [
-    ifelse ( lados = 3 )
-    [
-      fd min-step
-      lt 60
-      fd min-step
-      rt 120
-      fd min-step
-      lt 60
-      fd min-step
-    ]
-    [
-      fd min-step
-      lt angle
-      fd min-step
-      rt angle
-      fd min-step
-      lt ( angle * -1)
-      fd min-step
-      rt ( angle * -1)
-      fd min-step
-    ]
+  iteration
+  set pcolor counter
   ]
+
+end
+
+
+to iteration
+  ;condicion inicial z = z^2+c
+  let z 0
+  let c 0.279
+  let aux 0
+  while [ counter < 10 ]
   [
-    ifelse ( lados = 3)
-    [
-    iteration ( k - 1 )
-    lt 60
-    iteration ( k - 1 )
-    rt 120
-    iteration ( k - 1 )
-    lt 60
-    iteration ( k - 1 )
-    ]
-    [
-      let counter 1
-      loop
-      [
-        iteration ( k - 1 )
-        lt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        lt ( angle * -1)
-        iteration ( k - 1 )
-        rt ( angle * -1)
-        iteration ( k - 1 )
-      ]
-    ]
+  set aux z
+  set z z ^ 2 + c
+  set counter counter + 1
   ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-647
-448
+333
+30
+955
+449
 -1
 -1
-13.0
+1.022444
 1
 10
 1
@@ -99,36 +72,21 @@ GRAPHICS-WINDOW
 1
 1
 1
-0
-32
-0
-32
+-300
+300
+-200
+200
 0
 0
 1
 ticks
 30.0
 
-SLIDER
-6
-28
-178
-61
-n
-n
-1
-30
-1.0
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
-39
-92
-105
-125
+70
+27
+133
+60
 NIL
 setup
 NIL
@@ -140,60 +98,6 @@ NIL
 NIL
 NIL
 1
-
-BUTTON
-42
-154
-105
-187
-NIL
-go
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-13
-215
-185
-248
-lados
-lados
-3
-5
-5.0
-1
-1
-NIL
-HORIZONTAL
-
-MONITOR
-42
-285
-99
-330
-NIL
-angle
-17
-1
-11
-
-MONITOR
-54
-347
-111
-392
-NIL
-lados
-17
-1
-11
 
 @#$#@#$#@
 ## WHAT IS IT?

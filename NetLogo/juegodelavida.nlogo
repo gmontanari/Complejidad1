@@ -53,7 +53,6 @@ end
 end
 
 
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -89,7 +88,7 @@ SWITCH
 71
 random?
 random?
-0
+1
 1
 -1000
 
@@ -520,5 +519,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+1
 @#$#@#$#@

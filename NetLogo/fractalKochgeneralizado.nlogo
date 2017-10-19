@@ -6,8 +6,14 @@ globals
 
 to setup
   ca
-  set angle (360 / lados)
-  set min-step world-width / ( 3 ^ n )
+  ifelse ( lados = 3)
+  [
+    set angle (180 / lados)
+  ]
+  [
+    set angle (360 / lados)
+  ]
+  set min-step world-width / ( lados ^ n )
   crt 1
   [
     setxy min-pxcor min-pycor
@@ -31,7 +37,7 @@ end
 to iteration [k]  ; conjunto generador
   ifelse ( k = 1)
   [
-    ifelse ( lados = 3 )
+    if ( lados = 3 )
     [
       fd min-step
       lt 60
@@ -41,43 +47,138 @@ to iteration [k]  ; conjunto generador
       lt 60
       fd min-step
     ]
+
+    if ( lados = 4  )
     [
-      fd min-step
-      lt angle
-      fd min-step
-      rt angle
-      fd min-step
-      lt ( angle * -1)
-      fd min-step
-      rt ( angle * -1)
-      fd min-step
+        fd min-step
+        lt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        lt angle
+        fd min-step
+    ]
+     if ( lados = 5  )
+    [
+        fd min-step
+        lt (180 - angle)
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt (180 - angle) * -1
+        fd min-step
+    ]
+      if ( lados = 6  )
+    [
+        fd min-step
+        lt (180 - angle)
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt (180 - angle) * -1
+        fd min-step
+    ]
+       if ( lados = 7  )
+    [
+        fd min-step
+        lt (180 - angle)
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt angle
+        fd min-step
+        rt (180 - angle) * -1
+        fd min-step
     ]
   ]
-  [
-    ifelse ( lados = 3)
+  [ ;;; Si hay mas de una iteracion
+    if ( lados = 3)
     [
     iteration ( k - 1 )
-    lt 60
+    lt
     iteration ( k - 1 )
     rt 120
     iteration ( k - 1 )
     lt 60
     iteration ( k - 1 )
     ]
+    if ( lados = 4)
     [
-      let counter 1
-      loop
-      [
+    iteration ( k - 1 )
+    lt angle
+    iteration ( k - 1 )
+    rt angle
+    iteration ( k - 1 )
+    rt angle
+    iteration ( k - 1 )
+    lt angle
+    iteration ( k - 1 )
+    ]
+         if ( lados = 5  )
+    [
         iteration ( k - 1 )
-        lt angle
+        lt (180 - angle)
         iteration ( k - 1 )
         rt angle
         iteration ( k - 1 )
-        lt ( angle * -1)
+        rt angle
         iteration ( k - 1 )
-        rt ( angle * -1)
+        rt angle
         iteration ( k - 1 )
-      ]
+        rt (180 - angle) * -1
+        iteration ( k - 1 )
+    ]
+      if ( lados = 6  )
+    [
+        iteration ( k - 1 )
+        lt (180 - angle)
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt (180 - angle) * -1
+        iteration ( k - 1 )
+    ]
+       if ( lados = 7  )
+    [
+        iteration ( k - 1 )
+        lt (180 - angle)
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt angle
+        iteration ( k - 1 )
+        rt (180 - angle) * -1
+        iteration ( k - 1 )
     ]
   ]
 end
@@ -117,8 +218,8 @@ SLIDER
 n
 n
 1
-30
-1.0
+7
+2.0
 1
 1
 NIL
@@ -166,31 +267,20 @@ SLIDER
 lados
 lados
 3
-5
-5.0
+7
+4.0
 1
 1
 NIL
 HORIZONTAL
 
 MONITOR
-42
-285
-99
-330
+668
+33
+725
+78
 NIL
 angle
-17
-1
-11
-
-MONITOR
-54
-347
-111
-392
-NIL
-lados
 17
 1
 11

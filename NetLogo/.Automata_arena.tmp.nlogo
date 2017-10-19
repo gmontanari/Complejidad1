@@ -1,86 +1,63 @@
-globals
-[
-  min-step
-  angle
-]
-
 to setup
   ca
-  set angle (360 / lados)
-  set min-step world-width / ( 3 ^ n )
-  crt 1
-  [
-    setxy min-pxcor min-pycor
-    set color white
-    set heading 90
-    pd
-  ]
+  ask patches [set pcolor white]
+  ask patches with [pycor = min-pycor] [set pcolor brown]
+
   reset-ticks
 end
 
 to go
-  clear-drawing
-  set min-step world-width / ( 3 ^ n )
-  ask turtle 0
+  sand
+  ask patches with [pcolor = yellow]
   [
-    iteration n
+     move
   ]
   tick
 end
 
-to iteration [k]  ; conjunto generador
-  ifelse ( k = 1)
+to sand
+  if ticks mod 20 = 0
   [
-    ifelse ( lados = 3 )
-    [
-      fd min-step
-      lt 60
-      fd min-step
-      rt 120
-      fd min-step
-      lt 60
-      fd min-step
-    ]
-    [
-      fd min-step
-      lt angle
-      fd min-step
-      rt angle
-      fd min-step
-      lt ( angle * -1)
-      fd min-step
-      rt ( angle * -1)
-      fd min-step
-    ]
-  ]
-  [
-    ifelse ( lados = 3)
-    [
-    iteration ( k - 1 )
-    lt 60
-    iteration ( k - 1 )
-    rt 120
-    iteration ( k - 1 )
-    lt 60
-    iteration ( k - 1 )
-    ]
-    [
-      let counter 1
-      loop
-      [
-        iteration ( k - 1 )
-        lt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        lt ( angle * -1)
-        iteration ( k - 1 )
-        rt ( angle * -1)
-        iteration ( k - 1 )
-      ]
-    ]
+    ask patch 0 max-pycor [set pcolor yellow]
   ]
 end
+
+to move
+  let down-patch patch-at 0 -1
+  let downr-patch patch-at 1 -1
+  let downl-patch patch-at -1 -1
+
+  let colordownpatch [pcolor] of down-patch
+  let colordownrpatch [pcolor] of downr-patch
+  let colordownlpatch [pcolor] of downl-patch
+
+  if [pcolor] of down-patch = white
+  [
+    set pcolor white
+    ask down-patch [set pcolor yellow]
+  ]
+
+  if colordownpatch = yellow and colordownrpatch = white and colordownlpatch = white
+  [
+    set pcolor white
+    ifelse (random-float 1 < 0.5)
+    [ask downr-patch [set pcolor yellow]]
+    [ask downl-patch [set pcolor yellow]]
+  ]
+  ;
+  if colordownpatch = yellow and colordownrpatch = yellow and colordownlpatch = white
+  [
+    set pcolor white
+    ask downl-patch [set pcolor yellow]
+  ]
+
+  if colordownpatch = yellow and colordownrpatch = white and colordownlpatch = yellow
+  [
+    set pcolor white
+    ask downr-patch [set pcolor yellow]
+  ]
+end
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -99,36 +76,21 @@ GRAPHICS-WINDOW
 1
 1
 1
-0
-32
-0
-32
+-16
+16
+-16
+16
 0
 0
 1
 ticks
 30.0
 
-SLIDER
-6
-28
-178
-61
-n
-n
-1
-30
-1.0
-1
-1
-NIL
-HORIZONTAL
-
 BUTTON
-39
-92
-105
-125
+85
+88
+151
+121
 NIL
 setup
 NIL
@@ -142,13 +104,13 @@ NIL
 1
 
 BUTTON
-42
-154
-105
-187
+88
+147
+151
+180
 NIL
 go
-NIL
+T
 1
 T
 OBSERVER
@@ -157,43 +119,6 @@ NIL
 NIL
 NIL
 1
-
-SLIDER
-13
-215
-185
-248
-lados
-lados
-3
-5
-5.0
-1
-1
-NIL
-HORIZONTAL
-
-MONITOR
-42
-285
-99
-330
-NIL
-angle
-17
-1
-11
-
-MONITOR
-54
-347
-111
-392
-NIL
-lados
-17
-1
-11
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -554,5 +479,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+1
 @#$#@#$#@
