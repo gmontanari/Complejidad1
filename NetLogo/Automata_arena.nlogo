@@ -61,6 +61,12 @@ to move
   ]
 end
 
+to draw-cell
+  while [mouse-down?]
+  [
+    ask patch mouse-xcor mouse-ycor [set pcolor brown]
+  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 210
@@ -113,6 +119,23 @@ BUTTON
 180
 NIL
 go
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+65
+215
+150
+248
+NIL
+draw-cell
 T
 1
 T

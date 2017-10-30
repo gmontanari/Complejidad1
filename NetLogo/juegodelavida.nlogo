@@ -10,7 +10,7 @@ to setup
     ]
   ]
   [
-    ask patches [set pcolor white]
+    pistolero
   ]
 
   reset-ticks
@@ -52,18 +52,58 @@ end
   ]
 end
 
+to pistolero
+  ask patches [set pcolor white]
+  ask patch 5 -7 [set pcolor black]
+  ask patch 5 -8 [set pcolor black]
+  ask patch 3 -8 [set pcolor black]
+  ask patch -6 -9 [set pcolor black]
+  ask patch -7 -9 [set pcolor black]
+  ask patch 1 -9 [set pcolor black]
+  ask patch 2 -9 [set pcolor black]
+  ask patch 15 -9 [set pcolor black]
+  ask patch 16 -9 [set pcolor black]
+  ask patch -8 -10 [set pcolor black]
+  ask patch -4 -10 [set pcolor black]
+  ask patch 1 -10 [set pcolor black]
+  ask patch 2 -10 [set pcolor black]
+  ask patch 15 -10 [set pcolor black]
+  ask patch 16 -10 [set pcolor black]
+  ask patch -18 -11 [set pcolor black]
+  ask patch -17 -11 [set pcolor black]
+  ask patch -9 -11 [set pcolor black]
+  ask patch -3 -11 [set pcolor black]
+  ask patch 1 -11 [set pcolor black]
+  ask patch 2 -11 [set pcolor black]
+  ask patch -18 -12 [set pcolor black]
+  ask patch -17 -12 [set pcolor black]
+  ask patch -9 -12 [set pcolor black]
+  ask patch -5 -12 [set pcolor black]
+  ask patch -3 -12 [set pcolor black]
+  ask patch -2 -12 [set pcolor black]
+  ask patch 3 -12 [set pcolor black]
+  ask patch 5 -12 [set pcolor black]
+  ask patch -9 -13 [set pcolor black]
+  ask patch -3 -13 [set pcolor black]
+  ask patch 5 -13 [set pcolor black]
+  ask patch -8 -14 [set pcolor black]
+  ask patch -4 -14 [set pcolor black]
+  ask patch -7 -15 [set pcolor black]
+  ask patch -6 -15 [set pcolor black]
 
+
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
-210
-10
-647
-448
+240
+75
+638
+194
 -1
 -1
-13.0
+10.0
 1
-10
+5
 1
 1
 1
@@ -71,15 +111,15 @@ GRAPHICS-WINDOW
 1
 1
 1
--16
-16
--16
-16
+-19
+19
+-5
+5
 0
 0
 1
 ticks
-30.0
+10.0
 
 SWITCH
 69

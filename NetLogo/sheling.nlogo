@@ -1,62 +1,80 @@
+patches-own[happy? %-similar-nearby]
+
 to setup
   ca
-  ask patches [set pcolor white]
-  ask patches with [pycor = min-pycor] [set pcolor brown]
+  ask patches [ set happy? false]
+
+  ask patches
+  [
+   if random 100 < total-density
+   [
+      set pcolor ifelse-value
+                  (random 100 < pink-density)
+                  [pink][violet]
+    ]
+  ]
 
   reset-ticks
 end
 
+
 to go
-  sand
-  ask patches with [pcolor = yellow]
-  [
-     move
-  ]
+  update
+  move-unhappy
   tick
 end
 
-to sand
-  if ticks mod 20 = 0
+to update
+  let total-nearby 0
+  ask patches with [pcolor != black]
   [
-    ask patch 0 max-pycor [set pcolor yellow]
+    set total-nearby count neighbors
+                     with [pcolor != black]
+
+    ifelse total-nearby != 0
+    [
+      set %-similar-nearby  100 * (count neighbors with
+                          [pcolor = [pcolor] of myself])/
+                          total-nearby
+    ]
+    [
+     set %-similar-nearby 0
+    ]
+    set happy? %-similar-nearby >= %-similar-wanted
+  ]
+
+
+end
+
+to move-unhappy
+  ask patches with [not happy? and pcolor != black]
+  [
+    ask one-of patches with [pcolor = black]
+   [
+      set pcolor [pcolor] of myself
+    ]
+   set pcolor black
+
   ]
 end
 
-to move
-  let down-patch patch-at 0 -1
-  let downr-patch patch-at 1 -1
-  let downl-patch patch-at -1 -1
 
-  let colordownpatch [pcolor] of down-patch
-  let colordownrpatch [pcolor] of downr-patch
-  let colordownlpatch [pcolor] of downl-patch
 
-  if [pcolor] of down-patch = white
-  [
-    set pcolor white
-    ask down-patch [set pcolor yellow]
-  ]
 
-  if colordownpatch = yellow and colordownrpatch = white and colordownlpatch = white
-  [
-    set pcolor white
-    ifelse (random-float 1 < 0.5)
-    [ask downr-patch [set pcolor yellow]]
-    [ask downl-patch [set pcolor yellow]]
-  ]
-  ;
-  if colordownpatch = yellow and colordownrpatch = yellow and colordownlpatch = white
-  [
-    set pcolor white
-    ask downl-patch [set pcolor yellow]
-  ]
 
-  if colordownpatch = yellow and colordownrpatch = white and colordownlpatch = yellow
-  [
-    set pcolor white
-    ask downr-patch [set pcolor yellow]
-  ]
-end
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -86,11 +104,56 @@ GRAPHICS-WINDOW
 ticks
 30.0
 
+SLIDER
+35
+104
+207
+137
+total-density
+total-density
+0
+100
+15.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+49
+185
+221
+218
+pink-density
+pink-density
+0
+100
+64.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+47
+276
+225
+309
+%-similar-wanted
+%-similar-wanted
+0
+100
+41.0
+1
+1
+NIL
+HORIZONTAL
+
 BUTTON
-85
-88
-151
-121
+66
+33
+139
+66
 NIL
 setup
 NIL
@@ -104,10 +167,10 @@ NIL
 1
 
 BUTTON
-88
-147
-151
-180
+164
+43
+227
+76
 NIL
 go
 T
@@ -119,6 +182,24 @@ NIL
 NIL
 NIL
 1
+
+PLOT
+748
+39
+948
+189
+plot 1
+NIL
+NIL
+0.0
+10.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count patches with [happy? and pcolor != black] / count patches with [pcolor != black] "
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -479,5 +560,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-1
+0
 @#$#@#$#@

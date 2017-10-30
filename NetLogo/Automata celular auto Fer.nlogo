@@ -1,35 +1,52 @@
+globals [ t ]
+
 to setup
   ca
-  ask patches [set pcolor white]
+  set t 0
   ask patch min-pxcor 0
   [
-    set pcolor pink
+    set pcolor white
   ]
-  ask patch 0 0 [set pcolor gray]
+  ask patch max-pxcor 0
+  [
+  set pcolor brown
+  ]
+
   reset-ticks
 end
 
 to go
-  ask patches with [pcolor = pink]
+  ask patches with [pcolor = white]
   [
     move
   ]
+
   tick
 end
 
 to move
+  ;set pcolor black
+  ;set t t + 1
+  ;ask patch min-pxcor t [set pcolor white]
+  ;ask patch-at 1 0 [set pcolor white]
   let right-patch patch-at 1 0
-  ifelse [pcolor] of right-patch = white
+  if [pcolor] of right-patch = black ; accedo a la variable pcolor del patch de la derecha con OF, procedimiento reportero
   [
-    set pcolor white
-    ask right-patch [ set pcolor pink]
+   set pcolor black
+   ask right-patch ; ask establece el contexto
+   [
+     set pcolor white
+    ]
   ]
-  [
-    set pcolor white
-    ask patch-at 0 1 [ set pcolor pink]
-  ]
-  ask pat
 
+  if [pcolor] of right-patch = brown
+  [
+  set pcolor black ; la celda que se desocupa se pinta de negro
+  ask patch-at 0 1 ; el parche al que se mueve el coche
+  [
+  set pcolor white ; llenar el parche con color blanco (coche)
+  ]
+ ]
 
 end
 @#$#@#$#@
@@ -61,10 +78,10 @@ ticks
 30.0
 
 BUTTON
-85
-88
-151
-121
+64
+76
+127
+109
 NIL
 setup
 NIL
@@ -78,10 +95,10 @@ NIL
 1
 
 BUTTON
-88
-147
-151
-180
+66
+140
+129
+173
 NIL
 go
 T
@@ -436,7 +453,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -453,5 +470,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-1
+0
 @#$#@#$#@

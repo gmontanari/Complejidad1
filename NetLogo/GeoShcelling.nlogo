@@ -1,66 +1,136 @@
-globals
-[
-  re-min ; la parte real más pequeña
-  re-max ; la parte real más grande
-  im-min ; la parte imaginaria más pequeña
-  im-max ; la parte imaginaria más pequeña
-
-  mx ; tamaño del paso en Re
-  my ; tamaño del paso en Im
-  counter
-]
+extensions[gis]
+globals [data r]
+patches-own [id mycolor neighborhood happy?]
 
 to setup
   ca
-  set re-min -2 ; parte real
-  set re-max 1 ; parte real
-  set im-min -1 ; parte im
-  set im-max 1 ; parte im
-  transform-world
-  compute-set
+  set data gis:load-dataset "DC.shp"
+  gis:set-drawing-color white
+  gis:draw data 1
+
+  setup-patches
+
   reset-ticks
 end
 
-to transform-world
-set mx (re-max - re-min)/(max-pxcor - min-pxcor)
-set my (im-max - im-min)/(max-pycor - min-pycor)
-ask patches
-  [
-  set counter 0
-  ]
-end
+to setup-patches
+;  foreach gis:feature-list-of data
+;  [x ->
+;    if (gis:property-value x "SOC")
+;    = "RED"
+;    [
+;     gis:set-drawing-color red
+;     gis:fill x 2
+;    ]
+;
+;    if (gis:property-value x "SOC")
+;    = "BLUE"
+;    [
+;     gis:set-drawing-color blue
+;     gis:fill x 2
+;    ]
+;
+;    if (gis:property-value x "SOC")
+;    = "UNOCCUPIED"
+;    [
+;     gis:set-drawing-color grey
+;     gis:fill x 2
+;    ]
+;
+;  ]
+  let n 1
+  foreach gis:feature-list-of data
+  [x ->
+    let center-point gis:location-of
+                     gis:centroid-of x
 
-to compute-set
+    ask patch (item 0 center-point)
+              (item 1 center-point)
+   [
+     set id n
+     set n n + 1
+  set mycolor gis:property-value x "SOC"
+      if mycolor = "RED" [set pcolor red]
+      if mycolor = "BLUE" [set pcolor blue]
+      if mycolor = "UNOCCUPIED"
+                  [set pcolor grey]
+
+    ]
+
+  ]
   ask patches
   [
-  iteration
-  set pcolor counter
+   set happy? false
   ]
 
-end
-
-
-to iteration
-  ;condicion inicial z = z^2+c
-  let z 0
-  let c 0.279
-  let aux 0
-  while [ counter < 10 ]
+  ask patches with [id != 0]
   [
-  set aux z
-  set z z ^ 2 + c
-  set counter counter + 1
+   set r 1
+   set happy? false
+   find-neighbors
+   show count neighborhood
   ]
+
+;  ask patches with [id != 0]
+;  [show id set  plabel id]
 end
+
+to find-neighbors
+  ;let r 1
+  set neighborhood other patches with [id != 0]
+                   in-radius r
+  if count neighborhood = 0
+    [
+     set r r + 1
+     find-neighbors
+    ]
+end
+
+to go
+
+  ask patches with [id != 0]
+  [
+   let occupied-neighbors count neighborhood
+    with [pcolor != grey]
+
+   let similar-neighbors count neighborhood
+    with [pcolor = [pcolor] of myself]
+   if occupied-neighbors != 0
+    [
+     set similar-neighbors 100 * similar-neighbors /
+                          occupied-neighbors
+    ]
+
+    set happy? ifelse-value
+               (similar-neighbors >= similar-wanted)
+    [true][false]
+  ]
+
+  ask patches with
+         [pcolor != grey and not happy? and id != 0]
+  [
+    ask one-of patches with[pcolor = grey ]
+    [
+      set pcolor [pcolor] of myself
+    ]
+    set pcolor grey
+  ]
+
+  tick
+end
+
+
+
+
 @#$#@#$#@
 GRAPHICS-WINDOW
-333
-30
-955
-449
+210
+10
+647
+448
 -1
 -1
-1.022444
+13.0
 1
 10
 1
@@ -70,10 +140,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--300
-300
--200
-200
+-16
+16
+-16
+16
 0
 0
 1
@@ -81,13 +151,45 @@ ticks
 30.0
 
 BUTTON
-70
-27
-133
-60
+101
+49
+174
+82
 NIL
 setup
 NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+55
+177
+227
+210
+similar-wanted
+similar-wanted
+0
+100
+50.0
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+110
+107
+173
+140
+NIL
+go
+T
 1
 T
 OBSERVER
@@ -439,7 +541,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
