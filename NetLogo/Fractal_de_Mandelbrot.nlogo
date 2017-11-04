@@ -9,7 +9,7 @@ mx ; tamaño del paso en Re
 my ; tamaño del paso en Im
 ]
 
-patches-own ; varibale de estado
+patches-own ; variable de estado
 [
   re ; parte real
   im ; parte imaginaria
@@ -49,15 +49,15 @@ end
 to compute-set
   ask patches
   [
-  iteration
-  set pcolor counter
+  iteration               ; aca itera
+  set pcolor counter      ; aca veo de que color lo pongo segun el numero de iteraciones
   ]
 
 end
 
 
 to iteration
-  ;condicion inicial z = a + i b
+  ;condicion inicial z = a + i b y z0 es 0, entonces a y b son 0
   let a 0
   let b 0
   let aux 0
