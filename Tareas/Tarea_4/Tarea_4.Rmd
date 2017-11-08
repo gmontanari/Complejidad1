@@ -3,7 +3,8 @@ title: 'Tarea 4: Fractales'
 author: "Guillermina Montanari"
 date: "3/11/2017"
 output:
-  html_document:
+  word_document: default
+  html_document: null
   df_print: paged
 ---
 
@@ -18,7 +19,7 @@ img <- readPNG("JuliaSet1.png")
  grid.raster(img)
 ```
 
-##1. Entregar un reporte sobre un fractal de Julia, modificar el programa de Mandelbrot para graficar un fractal de Julia.
+####1. Entregar un reporte sobre un fractal de Julia, modificar el programa de Mandelbrot para graficar un fractal de Julia.
 
 El conjunto de Mandelbrot se genera con la siguiente formula recursiva:
 
@@ -72,7 +73,6 @@ Por otro lado, si el numero $Z_{n}$, a partir de ese $Z_{0}$, no crece dentro de
 
 **Va anexo a este documento el archivo de Netlogo, la funcion que cambie es iteration:**
 
-
 1. La Condicion inicial z0 es un valor arbitrario, que es el que varia, yo tomo los valores del patch actual.
 
 2. La constante C la fijo en el inicio con los sliders en las variables c-re y c-im, este valor no cambia.
@@ -83,54 +83,92 @@ La relacion entre ambos conjuntos, es que si tomamos uno a uno los puntos $C$ de
 img <- readPNG("Rel1.png")
  grid.raster(img)
 ```
-
 Y asi generar un conjunto de Julia diferente:
-
 ```{r fig.width=3, fig.height=3,echo=FALSE}
 img <- readPNG("Rel2.png")
  grid.raster(img)
 ```
 
-##2. Investigue que es el numero de enrollamiento (winding number) del conjunto de Mandelbrot.
+####2. Investigue que es el numero de enrollamiento (winding number) del conjunto de Mandelbrot.
 
 En matematica, una funcion iterativa es una funcion X → X, tal que se aplica a un conjunto de X en si misma, por lo tanto se obtiene una funcion compuesta de ella misma, un cierto numero de veces. La funcion para generar el conjunto de Mandelbrot $Z_{n} = Z_{n-1}^2+C$ es de este tipo.
 
 El numero de enrollamiento (winding number) de una funcion nos da el numero de veces que la curva definida por nuestra funcion pasa, en el sentido de las agujas del reloj, alrededor de $Z_{0}$.
 
 
-##3. Aqui hay otra forma de mostrar que el conjunto de Cantor tiene longitud total cero, en la primera etapa de construcción del conjunto de Cantor quitamos un intervalo de tamaño 1/3 del intervalo unitario [0,1]. Al siguiente intervalo quitamos dos intervalos cada uno de longitud 1/9. Sumando una serie infinita apropiada, demuestre que la longitud total de todos los intervalos removidos es 1, y por lo tanto, el conjunto de puntos que queda (Conjunto de Cantor) debe tener longitud cero.
+####3. Aqui hay otra forma de mostrar que el conjunto de Cantor tiene longitud total cero, en la primera etapa de construcción del conjunto de Cantor quitamos un intervalo de tamaño 1/3 del intervalo unitario [0,1]. Al siguiente intervalo quitamos dos intervalos cada uno de longitud 1/9. Sumando una serie infinita apropiada, demuestre que la longitud total de todos los intervalos removidos es 1, y por lo tanto, el conjunto de puntos que queda (Conjunto de Cantor) debe tener longitud cero.
 
-```{r fig.width=10, fig.height=10,echo=FALSE}
-img <- readPNG("Cantor.png")
- grid.raster(img)
-```
 **Tomando la grafica como base, vamos a hacer lo siguiente:**
 
-1. Primera Iteracion: remuevo $1/3$.
+```{r fig.width=3, fig.height=3,echo=FALSE}
+img <- readPNG("Cantor1.png")
+ grid.raster(img)
+```
 
-2. Segunda Iteracion: remuevo $1/3$ de cada parte -> Si tenia dos partes de un tercio, las divido en tres y remuevo una, de cada una de ellas estaria removiendo $1/9$ de la original, como son dos, entonces serian $2* 1/9$ que es lo mismo que $2* 1/3^2$
+* Primera Iteracion: remuevo $1/3$.
+* Segunda Iteracion: remuevo $1/3$ de cada parte -> Si tenia dos partes de un tercio, las divido en tres y remuevo una, de cada una de ellas estaria removiendo $1/9$ de la original, como son dos, entonces serian $2 *1/9$ que es lo mismo que $2* 1/3^2$
+* Tercera Iteracion: remuevo $1/3$ de cada parte -> tenia cuatro partes, las divido en tres y remuevo una, de cada una de ellas estaria removiendo $1/27$ de la original, como son cuatro, entonces serian $4/27$ $2^2 *1/27$ que es lo mismo que $2^2* 1/3^3$
 
-3. Tercera Iteracion: remuevo $1/3$ de cada parte -> tenia cuatro partes, las divido en tres y remuevo una, de cada una de ellas estaria removiendo $1/27$ de la original, como son cuatro, entonces serian $4/27$ $2^2* 1/27$ que es lo mismo que $2^2* 1/3^3$
-```{r fig.width=10, fig.height=10,echo=FALSE}
+```{r fig.width=3, fig.height=3,echo=FALSE}
 img <- readPNG("Cantor2.png")
  grid.raster(img)
 ```
 
-###4. Calcular la dimensión fractal del Conjunto de Cantor de quintos pares
+```{r fig.width=10, fig.height=10,echo=FALSE}
+img <- readPNG("Cantor3.png")
+ grid.raster(img)
+```
+
+####4. Calcular la dimensión fractal del Conjunto de Cantor de quintos pares
 
 La dimension fractal del conjunto de Cantor de 5 pares seria:
 
+m = cantidad de copias que tengo= 3 (eran 5 y quite 2)
+
+r = factor de escala = 5 ( por cuanto lo tengo que multilicar para regresar al 1 inicial.)
+
 $Dim = Ln(m)/Ln(r) = Ln(3)/Ln(5) = 0.68$
 
-###5. (Sin dígitos impares) Encuentre la dimensión de similitud del subconjunto de [0,1] que consiste en los números reales con sólo dígitos pares en su desarrollo decimal.
+####5. (Sin dígitos impares) Encuentre la dimensión de similitud del subconjunto de [0,1] que consiste en los números reales con sólo dígitos pares en su desarrollo decimal.
 
-###6. (Copo de Nieve-snowflake) Para construir el famoso fractal conocido como la curva copo de nieve de Koch, usamos un tríangulo equilátero para S0, entonces hacemos la iteración de la curva de Koch en cada lado del triángulo:
+Conjunto de reales de decimos impares:
+
+m = cantidad de copias que tengo = 5 (eran 10 y quite 5)
+
+r = factor de escala = 10 ( por cuanto lo tengo que multilicar para regresar al 1 inicial.)
+
+$Dim = Ln(m)/Ln(r) = Ln(5)/Ln(10) = 0.69$
+
+####6. (Copo de Nieve-snowflake) Para construir el famoso fractal conocido como la curva copo de nieve de Koch, usamos un tríangulo equilátero para S0, entonces hacemos la iteración de la curva de Koch en cada lado del triángulo:
 
 a) Dibuje a S1 y S2.
+
+```{r fig.width=3, fig.height=3,echo=FALSE}
+img <- readPNG("Koch1.png")
+ grid.raster(img)
+```
+
 b) La curva de copo de nieve es la curva límite S = S∞. Muestre que longitud de arco es infinita.
+```{r fig.width=10, fig.height=10,echo=FALSE}
+img <- readPNG("Koch3.png")
+ grid.raster(img)
+```
+
+
 c) Encuentre el área de la región delimitada por S.
+
+```{r fig.width=10, fig.height=10,echo=FALSE}
+img <- readPNG("Koch4.png")
+ grid.raster(img)
+```
+
 d) Encuentre la dimensión de similitud de la curva perímetro de S.
 
+m = cantidad de copias que tengo= 4 (eran 3 y agregue 1)
+
+r = factor de escala = 0.75 ( por cuanto lo tengo que multilicar para regresar al 1 inicial.)
+
+$Dim = Ln(m)/Ln(r) = Ln(4)/Ln(0.75) = -4.82$
 
 El copo de nieve es continuo, pero no diferenciable, hablando sueltamente ”todo son esquinas”.
 
