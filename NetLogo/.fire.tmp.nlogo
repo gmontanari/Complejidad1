@@ -1,168 +1,187 @@
 globals
 [
-  re-min ; la parte real más pequeña
-  re-max ; la parte real más grande
-  im-min ; la parte imaginaria más pequeña
-  im-max ; la parte imaginaria más pequeña
-
-  mx ; tamaño del paso en Re
-  my ; tamaño del paso en Im
+  initial-trees
+  burned-trees
+  list-island-size
+  component-size
 
 ]
 
-patches-own ; variable de estado
-[
-  re ; parte real
-  im ; parte imaginaria
-  counter ; cuenta las interaciones realizadas para el código
-]
+patches-own [explored?]
 
 to setup
   ca
-  set re-min -2 ; parte real
-  set re-max 2 ; parte real
-  set im-min -1 ; parte im
-  set im-max 1 ; parte im
-  transform-world
-  compute-set
+  set list-island-size[]
+  ask patches
+  [
+    set explored? false
+    set pcolor ifelse-value
+      (random 100 < initial-density) [green][black]
+
+  ]
+  set initial-trees count patches
+               with [pcolor = green]
+  ask patches with [pxcor = min-pxcor]
+  [
+               set pcolor red
+  ]
+  set burned-trees count patches
+               with [pcolor = red]
   reset-ticks
 end
 
-to transform-world
-   set mx (re-max - re-min)/(max-pxcor - min-pxcor)
-   set my (im-max - im-min)/(max-pycor - min-pycor)
-   ask patches
-   [
-     linear-transform pxcor pycor
-     set counter 0
-  ]
-end
-
-to linear-transform [a b] ; transformamos el mundo de Netlogo
-  set re mx * (a - min-pxcor) + re-min
-  set im my * (b - min-pycor) + im-min
-  set counter 0
-end
-
-
-
-to compute-set
-  ask patches
+to go
+  if not any? patches with [pcolor = red]
   [
-  iteration               ; aca itera
-  set pcolor scale-color green counter 0 100      ; aca veo de que color lo pongo segun el numero de iteraciones
+    count-trees
+    plot-histogram
+    stop
   ]
 
+  ask patches with [pcolor = red]
+  [
+    ask neighbors4 with [pcolor = green]
+    [
+      set pcolor red
+      set burned-trees burned-trees + 1 set initial-trees count patches
+               with [pcolor = green]
+    ]
+    set pcolor red - 0.5
+  ]
+
+  fade
+
+  tick
 end
 
 
-to iteration
-  ;condicion inicial z0 es un valor arbitrario, yo tomo los valores del propio patch actual, esto es lo que varia
-  ;la constante C la fijo en el inicio con los sliders en las variables c-re y c-im, este valor no cambia
-  let a re
-  let b im
-
-  let aux 0
-
-  while [ (a ^ 2 + b ^ 2 ) <  4 and counter < 100 ]
+to fade
+  ask patches with [ pcolor != red and pcolor != green and pcolor != black]
   [
-     set aux a
-     set a a ^ 2 - b ^ 2 + c-re
-     set b 2 * aux * b + c-im
-     set counter counter + 1
+    set pcolor pcolor - 0.5
+    if pcolor < red - 3
+    [
+      set pcolor red - 3
+    ]
   ]
 
 end
 
-to zoom-in
-  if mouse-down?
+to explore [new-color]
+  if explored? [stop]
+  set component-size component-size + 1
+  set explored? true
+  set pcolor new-color
+  ask neighbors4 with [pcolor = green]
   [
-    let delta-x abs (re-max - re-min)
-    let delta-y abs (im-max - im-min)
-
-    let x0 mx * (mouse-xcor - min-pxcor) + re-min
-    let y0 my * (mouse-ycor - min-pycor) + im-min
-
-    set re-min x0 - 0.25 * delta-x
-    set re-min x0 - 0.25 * delta-x
-    set im-min y0 - 0.25 * delta-y
-    set im-min y0 - 0.25 * delta-y
-
-    transform-world
-    compute-set
-   ]
+    explore new-color
+  ]
 end
 
-to zoom-out
-  if mouse-down?
+to count-trees
+  loop
   [
-    let delta-x abs (re-max - re-min)
-    let delta-y abs (im-max - im-min)
+    let start one-of patches with
+            [pcolor = green and not explored?]
+    if start = nobody
+    [
+       update-plots
+      stop
+    ]
 
-    let x0 mx * (mouse-xcor - min-pxcor) + re-min
-    let y0 my * (mouse-ycor - min-pycor) + im-min
+    set component-size 0
+    ask start [explore grey]
+    set list-island-size
+    lput component-size list-island-size
+  ]
+end
 
-    set re-min x0 - 1.25 * delta-x
-    set re-min x0 - 1.25 * delta-x
-    set im-min y0 - 1.25 * delta-y
-    set im-min y0 - 1.25 * delta-y
+to plot-histogram
+   set-current-plot "histograma-log-log"
+   set-plot-x-range -1 ln ( max list-island-size )
+   let xvalue
+      sort remove-duplicates list-island-size
+   foreach xvalue
+  [[n] ->
+   let frequency
+       length filter [[x] -> x = n ] list-island-size
+    plotxy ln n ln frequency
+  ]
 
-    transform-world
-    compute-set
-   ]
+
+
+
+
+
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-333
-30
-955
-449
+198
+15
+488
+306
 -1
 -1
-1.022444
+2.0
 1
 10
 1
 1
 1
 0
+0
+0
 1
-1
-1
--300
-300
--200
-200
+-70
+70
+-70
+70
 0
 0
 1
 ticks
 30.0
 
+SLIDER
+13
+184
+185
+217
+initial-density
+initial-density
+0
+100
+61.0
+1
+1
+NIL
+HORIZONTAL
+
 BUTTON
-70
-27
-133
+57
+45
+123
+78
+NIL
+Setup
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
 60
+105
+123
+138
 NIL
-setup
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-73
-94
-158
-127
-NIL
-zoom-in
+go
 T
 1
 T
@@ -173,52 +192,41 @@ NIL
 NIL
 1
 
-BUTTON
+PLOT
+871
 65
-161
-159
-194
+1071
+215
+Histogram
+size
 NIL
-zoom-out
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-56
-241
-228
-274
-c-re
-c-re
--1.5
-1
 0.0
-0.01
-1
-NIL
-HORIZONTAL
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 1 -16777216 true "" "if not empty? list-island-size\n[\nset-plot-x-range -1 max list-island-size\n]\nhistogram list-island-size"
 
-SLIDER
-59
-300
-231
-333
-c-im
-c-im
--1
-1
-1.0
-0.01
-1
+PLOT
+879
+246
+1079
+396
+histograma-log-log
 NIL
-HORIZONTAL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" ""
 
 @#$#@#$#@
 ## WHAT IS IT?

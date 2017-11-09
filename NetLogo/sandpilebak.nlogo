@@ -1,138 +1,93 @@
 globals
 [
-  re-min ; la parte real más pequeña
-  re-max ; la parte real más grande
-  im-min ; la parte imaginaria más pequeña
-  im-max ; la parte imaginaria más pequeña
-
-  mx ; tamaño del paso en Re
-  my ; tamaño del paso en Im
-
+  avalanche-list
+  avalanche-size
 ]
 
-patches-own ; variable de estado
+patches-own
+
 [
-  re ; parte real
-  im ; parte imaginaria
-  counter ; cuenta las interaciones realizadas para el código
+  h ; altura
 ]
 
 to setup
   ca
-  set re-min -2 ; parte real
-  set re-max 2 ; parte real
-  set im-min -1 ; parte im
-  set im-max 1 ; parte im
-  transform-world
-  compute-set
+  set avalanche-list [] ;lista vacía
+  ask patches ;
+  [
+    set h random 4 ; valores entre 0 y 3
+    set plabel h ; etiquetar con h a los parches
+    recolor ; procedimiento de recoloreaar depende de h
+
+  ]
   reset-ticks
 end
 
-to transform-world
-   set mx (re-max - re-min)/(max-pxcor - min-pxcor)
-   set my (im-max - im-min)/(max-pycor - min-pycor)
-   ask patches
-   [
-     linear-transform pxcor pycor
-     set counter 0
-  ]
+to recolor
+  set pcolor scale-color blue h 0 4 ; porque es la variable que hay que cambiar, scale-color regresa un color.
+
 end
 
-to linear-transform [a b] ; transformamos el mundo de Netlogo
-  set re mx * (a - min-pxcor) + re-min
-  set im my * (b - min-pycor) + im-min
-  set counter 0
-end
-
-
-
-to compute-set
-  ask patches
+to go
+  set avalanche-size 0 ; para que la variable global comience en 0
+  ask one-of patches ;;pidele a uno de ellos que le sume 1 ;one of: devuelve uno al azar
   [
-  iteration               ; aca itera
-  set pcolor scale-color green counter 0 100      ; aca veo de que color lo pongo segun el numero de iteraciones
+    set h h + 1 ;;asigna a h h+1
+    avalanche?
   ]
-
+  if avalanche-size > 0
+  [
+    set avalanche-list lput avalanche-size avalanche-list ;;; guardar en lista de avalanchas, tomar un elemento sobre una lista que se guarda con el mismo nombre, revisar audio- lput agrega al final de la lista
+  ]
+  tick
 end
 
-
-to iteration
-  ;condicion inicial z0 es un valor arbitrario, yo tomo los valores del propio patch actual, esto es lo que varia
-  ;la constante C la fijo en el inicio con los sliders en las variables c-re y c-im, este valor no cambia
-  let a re
-  let b im
-
-  let aux 0
-
-  while [ (a ^ 2 + b ^ 2 ) <  4 and counter < 100 ]
+to avalanche?
+  if h = 4
   [
-     set aux a
-     set a a ^ 2 - b ^ 2 + c-re
-     set b 2 * aux * b + c-im
-     set counter counter + 1
+    set avalanche-size avalanche-size + 1 ; asigna a avalanche size tamaño 1
+    set h 0
+    ask neighbors4 ;;neighbors4. sólo los 4 primeros vecinos (revisar vecindad de Noiman?)
+    [
+      set h h + 1
+      set plabel h ;actualizar etiqueta
+      avalanche?  ;
+      recolor
+    ]
+    set plabel h ; actualizar etiqueta
+    recolor ; recolorear
+    display ; "refrescar" pantalla
   ]
 
 end
 
-to zoom-in
-  if mouse-down?
-  [
-    let delta-x abs (re-max - re-min)
-    let delta-y abs (im-max - im-min)
 
-    let x0 mx * (mouse-xcor - min-pxcor) + re-min
-    let y0 my * (mouse-ycor - min-pycor) + im-min
 
-    set re-min x0 - 0.25 * delta-x
-    set re-min x0 - 0.25 * delta-x
-    set im-min y0 - 0.25 * delta-y
-    set im-min y0 - 0.25 * delta-y
 
-    transform-world
-    compute-set
-   ]
-end
 
-to zoom-out
-  if mouse-down?
-  [
-    let delta-x abs (re-max - re-min)
-    let delta-y abs (im-max - im-min)
 
-    let x0 mx * (mouse-xcor - min-pxcor) + re-min
-    let y0 my * (mouse-ycor - min-pycor) + im-min
-
-    set re-min x0 - 1.25 * delta-x
-    set re-min x0 - 1.25 * delta-x
-    set im-min y0 - 1.25 * delta-y
-    set im-min y0 - 1.25 * delta-y
-
-    transform-world
-    compute-set
-   ]
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
-333
-30
-955
-449
+210
+10
+647
+448
 -1
 -1
-1.022444
+13.0
 1
 10
 1
 1
 1
 0
+0
+0
 1
-1
-1
--300
-300
--200
-200
+-16
+16
+-16
+16
 0
 0
 1
@@ -140,10 +95,10 @@ ticks
 30.0
 
 BUTTON
-70
-27
-133
-60
+71
+63
+144
+96
 NIL
 setup
 NIL
@@ -157,12 +112,12 @@ NIL
 1
 
 BUTTON
-73
-94
-158
-127
+79
+110
+142
+143
 NIL
-zoom-in
+go
 T
 1
 T
@@ -173,52 +128,41 @@ NIL
 NIL
 1
 
-BUTTON
-65
-161
-159
-194
+PLOT
+654
+10
+985
+215
+histograma
+log avalanche-size
 NIL
-zoom-out
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SLIDER
-56
-241
-228
-274
-c-re
-c-re
--1.5
-1
 0.0
-0.01
-1
-NIL
-HORIZONTAL
+5.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "set-plot-x-range 0 max avalanche-list + 1;; actualizar rango comienza en 0 + la lista\nhistogram avalanche-list ;;histograma de la lista de la v. global\n;;netlogo no puede poner escala log."
 
-SLIDER
-59
-300
-231
-333
-c-im
-c-im
--1
-1
-1.0
-0.01
-1
-NIL
-HORIZONTAL
+PLOT
+652
+219
+1056
+496
+log log histogram
+log avalanche-size
+ln
+-1.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "\nif not empty? avalanche-list\n[\n  clear-plot\n  set-plot-x-range \n             -1 (ln (max avalanche-list) + 1)\n  let f 0 ;;frec. cero, crear variable local, cuantas veces se repite un número\n  let s item 0 sort avalanche-list ;;sort acomoda del más pequeño al más grande, hace una lista arreglada\n  foreach sort avalanche-list ;;para cada elemento de la lista rreglada\n  [x -> ;;correr para cada elemento de la lista\n   ifelse x = s ;;;si un elemento de la lista es igual a este, contarlo\n    [\n    set f f + 1 ;;;asignar a la frecuencia f + 1\n    ]\n    [\n    plotxy ln s ln f ;; una vez encontrados los valores se hace la gráfica para cada valor de la lista\n      set f 1 ;; asigna a f 1 porque encuentra el valor 1 vez\n      set s x\n    ] \n  \n  ]\n]"
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -562,7 +506,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

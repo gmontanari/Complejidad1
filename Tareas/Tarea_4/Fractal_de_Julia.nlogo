@@ -50,7 +50,7 @@ to compute-set
   ask patches
   [
   iteration               ; aca itera
-  set pcolor counter      ; aca veo de que color lo pongo segun el numero de iteraciones
+  set pcolor scale-color green counter 0 100      ; aca veo de que color lo pongo segun el numero de iteraciones
   ]
 
 end

@@ -17,7 +17,7 @@ to setup
   crt 1
   [
     setxy min-pxcor min-pycor
-    set color white
+    set color pink
     set heading 90
     pd
   ]
@@ -37,91 +37,40 @@ end
 to iteration [k]  ; conjunto generador
   ifelse ( k = 1)
   [
-    if ( lados = 3 )
+    ifelse ( lados = 3 )
     [
       fd min-step
-      lt 60
+      lt angle
       fd min-step
-      rt 120
+      rt angle * 2
       fd min-step
-      lt 60
+      lt angle
       fd min-step
     ]
-
-    if ( lados = 4  )
-    [
-        fd min-step
-        lt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        lt angle
-        fd min-step
-    ]
-     if ( lados = 5  )
-    [
-        fd min-step
-        lt (180 - angle)
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt (180 - angle) * -1
-        fd min-step
-    ]
-      if ( lados = 6  )
-    [
-        fd min-step
-        lt (180 - angle)
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt (180 - angle) * -1
-        fd min-step
-    ]
-       if ( lados = 7  )
-    [
-        fd min-step
-        lt (180 - angle)
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt angle
-        fd min-step
-        rt (180 - angle) * -1
-        fd min-step
+    [ ;; mas de 3 lados
+      fd min-step
+      lt angle
+      fd min-step
+      rt angle
+      fd min-step
+      rt angle
+      fd min-step
+      lt angle
+      fd min-step
     ]
   ]
   [ ;;; Si hay mas de una iteracion
-    if ( lados = 3)
+    ifelse ( lados = 3)
     [
     iteration ( k - 1 )
-    lt
+    lt angle
     iteration ( k - 1 )
-    rt 120
+    rt angle * 2
     iteration ( k - 1 )
-    lt 60
+    lt angle
     iteration ( k - 1 )
     ]
-    if ( lados = 4)
-    [
+    [ ;;lados > 3
     iteration ( k - 1 )
     lt angle
     iteration ( k - 1 )
@@ -131,54 +80,6 @@ to iteration [k]  ; conjunto generador
     iteration ( k - 1 )
     lt angle
     iteration ( k - 1 )
-    ]
-         if ( lados = 5  )
-    [
-        iteration ( k - 1 )
-        lt (180 - angle)
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt (180 - angle) * -1
-        iteration ( k - 1 )
-    ]
-      if ( lados = 6  )
-    [
-        iteration ( k - 1 )
-        lt (180 - angle)
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt (180 - angle) * -1
-        iteration ( k - 1 )
-    ]
-       if ( lados = 7  )
-    [
-        iteration ( k - 1 )
-        lt (180 - angle)
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt angle
-        iteration ( k - 1 )
-        rt (180 - angle) * -1
-        iteration ( k - 1 )
     ]
   ]
 end
@@ -219,7 +120,7 @@ n
 n
 1
 7
-2.0
+1.0
 1
 1
 NIL
@@ -268,7 +169,7 @@ lados
 lados
 3
 7
-4.0
+5.0
 1
 1
 NIL

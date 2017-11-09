@@ -1,125 +1,113 @@
-globals
-[
-  re-min ; la parte real más pequeña
-  re-max ; la parte real más grande
-  im-min ; la parte imaginaria más pequeña
-  im-max ; la parte imaginaria más pequeña
-
-  mx ; tamaño del paso en Re
-  my ; tamaño del paso en Im
-
-]
-
-patches-own ; variable de estado
-[
-  re ; parte real
-  im ; parte imaginaria
-  counter ; cuenta las interaciones realizadas para el código
-]
+extensions [gis]
+globals [data r]
+patches-own [id mycolor neighbordhood happy?]
 
 to setup
-  ca
-  set re-min -2 ; parte real
-  set re-max 2 ; parte real
-  set im-min -1 ; parte im
-  set im-max 1 ; parte im
-  transform-world
-  compute-set
-  reset-ticks
+   ca
+   set data gis:load-dataset "Mexico_States.shp"
+   gis:set-drawing-color pink
+   gis:draw data 1
+
+   setup-patches
+   reset-ticks
 end
 
-to transform-world
-   set mx (re-max - re-min)/(max-pxcor - min-pxcor)
-   set my (im-max - im-min)/(max-pycor - min-pycor)
-   ask patches
-   [
-     linear-transform pxcor pycor
-     set counter 0
+to setup-patches
+;  foreach gis:feature-list-of data
+;  [x ->
+;    if (gis:property-value x "SOC") = "RED"
+;    [
+;        gis:set-drawing-color red
+;        gis:fill x 2
+;    ]
+;     if (gis:property-value x "SOC") = "BLUE"
+;    [
+;        gis:set-drawing-color blue
+;        gis:fill x 2
+;    ]
+;     if (gis:property-value x "SOC") = "UNOCCUPIED"
+;    [
+;        gis:set-drawing-color white
+;        gis:fill x 2
+;    ]
+; ]
+ let n 1
+ foreach gis:feature-list-of data
+ [x ->
+    let center-point gis:location-of gis:centroid-of x
+    ask patch (item 0 center-point) (item 1 center-point)
+    [
+      set id n
+      set n n + 1
+      set mycolor gis:property-value x "SOC"
+      if mycolor = "RED" [set pcolor red]
+      if mycolor = "BLUE" [set pcolor blue]
+      if mycolor = "UNOCCUPIED" [set pcolor white]
+    ]
   ]
-end
-
-to linear-transform [a b] ; transformamos el mundo de Netlogo
-  set re mx * (a - min-pxcor) + re-min
-  set im my * (b - min-pycor) + im-min
-  set counter 0
-end
-
-
-
-to compute-set
   ask patches
   [
-  iteration               ; aca itera
-  set pcolor scale-color green counter 0 100      ; aca veo de que color lo pongo segun el numero de iteraciones
+  set happy? FALSE
+  ]
+  ask patches with [id != 0]
+  [
+    set r 1
+    find-neighbors
+  ]
+end
+
+to find-neighbors
+  set neighbordhood other patches with [id != 0] in-radius r
+  if count neighbordhood = nobody
+  [
+    set r r + 1
+    find-neighbors
+  ]
+end
+
+to go
+  ask patches with [ id != 0]
+  [
+    let occupied-neighbors count neighbordhood with [pcolor != white]
+    let similar-neighbors count neighbordhood
+    if occupied-neighbors != 0
+    [
+    set similar-neighbors 100 * similar-neighbors / occupied-neighbors
+    ]
+
+    set happy? ifelse-value (similar-neighbors >= similar-wanted)
+    [true]
+    [false]
+  ]
+  ask patches with  [pcolor != white and not happy? and id != 0]
+  [
+    ask one-of patches with [pcolor = white]
+    [
+      set pcolor [pcolor] of myself
+    ]
+    set pcolor white
+  ]
+  update-color
+  tick
+end
+
+to update-color
+  ask patches with [id > 0]
+  [
+   gis:set-drawing-color pcolor
+   gis:fill item (id - 1) gis:feature-list-of data 1
   ]
 
-end
-
-
-to iteration
-  ;condicion inicial z0 es un valor arbitrario, yo tomo los valores del propio patch actual, esto es lo que varia
-  ;la constante C la fijo en el inicio con los sliders en las variables c-re y c-im, este valor no cambia
-  let a re
-  let b im
-
-  let aux 0
-
-  while [ (a ^ 2 + b ^ 2 ) <  4 and counter < 100 ]
-  [
-     set aux a
-     set a a ^ 2 - b ^ 2 + c-re
-     set b 2 * aux * b + c-im
-     set counter counter + 1
-  ]
-
-end
-
-to zoom-in
-  if mouse-down?
-  [
-    let delta-x abs (re-max - re-min)
-    let delta-y abs (im-max - im-min)
-
-    let x0 mx * (mouse-xcor - min-pxcor) + re-min
-    let y0 my * (mouse-ycor - min-pycor) + im-min
-
-    set re-min x0 - 0.25 * delta-x
-    set re-min x0 - 0.25 * delta-x
-    set im-min y0 - 0.25 * delta-y
-    set im-min y0 - 0.25 * delta-y
-
-    transform-world
-    compute-set
-   ]
-end
-
-to zoom-out
-  if mouse-down?
-  [
-    let delta-x abs (re-max - re-min)
-    let delta-y abs (im-max - im-min)
-
-    let x0 mx * (mouse-xcor - min-pxcor) + re-min
-    let y0 my * (mouse-ycor - min-pycor) + im-min
-
-    set re-min x0 - 1.25 * delta-x
-    set re-min x0 - 1.25 * delta-x
-    set im-min y0 - 1.25 * delta-y
-    set im-min y0 - 1.25 * delta-y
-
-    transform-world
-    compute-set
-   ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-333
-30
-955
-449
+210
+10
+706
+507
 -1
 -1
-1.022444
+8.0
 1
 10
 1
@@ -129,10 +117,10 @@ GRAPHICS-WINDOW
 1
 1
 1
--300
-300
--200
-200
+-30
+30
+-30
+30
 0
 0
 1
@@ -140,10 +128,10 @@ ticks
 30.0
 
 BUTTON
-70
-27
-133
-60
+73
+36
+139
+69
 NIL
 setup
 NIL
@@ -157,29 +145,12 @@ NIL
 1
 
 BUTTON
-73
-94
-158
-127
+76
+102
+139
+135
 NIL
-zoom-in
-T
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-65
-161
-159
-194
-NIL
-zoom-out
+go
 T
 1
 T
@@ -191,31 +162,16 @@ NIL
 1
 
 SLIDER
-56
-241
-228
-274
-c-re
-c-re
--1.5
+13
+175
+185
+208
+similar-wanted
+similar-wanted
+0
+100
+38.0
 1
-0.0
-0.01
-1
-NIL
-HORIZONTAL
-
-SLIDER
-59
-300
-231
-333
-c-im
-c-im
--1
-1
-1.0
-0.01
 1
 NIL
 HORIZONTAL
@@ -579,5 +535,5 @@ true
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
 @#$#@#$#@
-0
+1
 @#$#@#$#@
